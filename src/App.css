@@ -1,0 +1,35 @@
+/* html{
+    background-color: #edf3ff;
+} */
+
+#root {
+  overflow: hidden;
+  background-color: #1e2530;
+  padding-right: 0 !important;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.gradient-top-left{
+  background: rgb(196,147,63);
+background: linear-gradient(156deg, rgba(196,147,63,1) 19%, rgba(250,229,159,1) 45%);
+}
+
+.btn-gold-ltr{
+  background: rgb(196,147,63);
+background: linear-gradient(270deg, rgba(196,147,63,1) 19%, rgba(250,229,159,1) 45%);
+}
+
+.gradient-top-btm{
+  background: rgb(196,147,63);
+background: linear-gradient(0deg, rgba(196,147,63,1) 22%, rgba(250,229,159,1) 72%);
+}
+.gradient-btm-top{
+  background: rgb(196,147,63);
+background: linear-gradient(0deg,rgba(250,229,159,1)  22%,  rgba(196,147,63,1)72%);
+}
+
+.theme1{
+  color : rgb(196,147,63);
+}
