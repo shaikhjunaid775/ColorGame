@@ -1,8 +1,8 @@
 import "./App.css";
-import Colorgame from "./component/Colorgame";
-import Registration from "./component/Registration";
-import Login from "./component/Login";
-import Forgot from "./component/Forgot";
+import Colorgame from "./pages/Colorgame";
+import Registration from "./pages/Registration";
+import Login from "./pages/Login";
+import Forgot from "./pages/Forgot";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Deposit from "./component/deposit/Deposit";
