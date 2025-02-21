@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import CountdownModal from "./CountdownModal";
+import beepSound from "../../assets/count.wav";
 
 function CountdownTimer({
   initialMinutes,
   initialSeconds,
   tabId,
-  onDateNumberChange
+  activeTab, // Get activeTab from parent
+  onDateNumberChange,
+  setShowModal
 }) {
   const [time, setTime] = useState({
     minutes: initialMinutes,
@@ -15,6 +18,7 @@ function CountdownTimer({
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [dateNumber, setDateNumber] = useState(getStoredNumber(tabId));
   const [showCounterModal, setShowCounterModal] = useState(false);
+  const [hasPlayedSound, setHasPlayedSound] = useState(false);
 
   function getFormattedDate() {
     const now = new Date();
@@ -38,7 +42,17 @@ function CountdownTimer({
     const timer = setInterval(() => {
       setTime((prevTime) => {
         if (prevTime.seconds > 0) {
-          if (prevTime.seconds <= 6 && prevTime.minutes === 0) {
+          // Play sound only if tab is active and sound hasn't played yet
+          if (
+            prevTime.seconds <= 6 &&
+            prevTime.minutes === 0 &&
+            activeTab === tabId
+          ) {
+            if (!hasPlayedSound) {
+              const beepAudio = new Audio(beepSound);
+              beepAudio.play();
+              setHasPlayedSound(true);
+            }
             setShowCounterModal(true);
           }
           return { ...prevTime, seconds: prevTime.seconds - 1 };
@@ -54,14 +68,13 @@ function CountdownTimer({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [time]);
+  }, [time, activeTab]); // Add activeTab to dependencies
 
   useEffect(() => {
-    if (isTimeUp) {
-      setTime({ minutes: initialMinutes, seconds: initialSeconds });
-      setIsTimeUp(false);
+    if (showCounterModal) {
+      setShowModal(false); // Close parent modal when counter modal is shown
     }
-  }, [isTimeUp, initialMinutes, initialSeconds]);
+  }, [showCounterModal, setShowModal]);
 
   useEffect(() => {
     if (isTimeUp) {
@@ -84,6 +97,7 @@ function CountdownTimer({
 
       setTime({ minutes: initialMinutes, seconds: initialSeconds });
       setIsTimeUp(false);
+      setHasPlayedSound(false); // Reset sound flag after reset
     }
   }, [
     isTimeUp,
@@ -93,6 +107,7 @@ function CountdownTimer({
     tabId,
     onDateNumberChange
   ]);
+
   return (
     <>
       <div>
@@ -113,8 +128,8 @@ function CountdownTimer({
             {time.seconds % 10}
           </span>
         </span>
-        {/* Countdown Modal */}
 
+        {/* Countdown Modal */}
         <CountdownModal
           showCounterModal={showCounterModal}
           setShowCounterModal={setShowCounterModal}

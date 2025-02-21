@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Modal({ showModal, content, onClose, label }) {
+function Modal({ showModal, onClose, label, ballIndex, colors }) {
   // const [showModal, setShowModal] = useState(false);
   const [balanceActiveButton, setBalanceActiveButton] = useState(1);
   const [quantityActiveButton, setQuantityActiveButton] = useState(1);
@@ -56,7 +56,7 @@ function Modal({ showModal, content, onClose, label }) {
           <div className="justify-center w-full items-center fixed bottom-0 z-50 outline-none focus:outline-none max-w-[800px]">
             <div className="relative ">
               {/*content*/}
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-800 outline-none focus:outline-none">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-800 outline-none focus:outline-none border-green-300">
                 {/*header*/}
 
                 {/*body*/}
@@ -65,9 +65,25 @@ function Modal({ showModal, content, onClose, label }) {
                     <h1 className="font-bold text-slate-50">{label}</h1>
                     <button
                       type="button"
-                      className="text-[#fae59f] bg-gray-700   font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  "
+                      className="text-[#fae59f] font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                      style={{
+                        background:
+                          colors?.length === 1 &&
+                          (colors[0] === "Big" || colors[0] === "Small")
+                            ? "gray" // Neutral gray for size selections
+                            : colors?.length === 1
+                            ? colors[0] // Solid color
+                            : colors?.length === 2
+                            ? `linear-gradient(330deg, ${colors[0]} 50%, ${colors[1]} 50%)`
+                            : "gray"
+                      }}
                     >
-                      Select {content}
+                      {ballIndex
+                        ? `Select Ball ${ballIndex}`
+                        : colors?.length === 1 &&
+                          (colors[0] === "Big" || colors[0] === "Small")
+                        ? `Size: ${colors[0]}`
+                        : `Color: ${colors.join(", ")}`}
                     </button>
                   </div>
                   <div className="grid grid-cols-2 gap-2 items-center justify-between overflow-hidden">

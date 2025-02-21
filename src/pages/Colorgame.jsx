@@ -23,11 +23,11 @@ import TabLedger from "../component/dashboard/TabLedger";
 
 function Colorgame() {
   const [showCounterModal, setShowCounterModal] = useState(false);
+
   const [activeTab, setActiveTab] = useState(1);
   const [activeButton, setActiveButton] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null); // Stores color or index
-  const [activeColor, setActiveColor] = useState("");
+  const [modalContent, setModalContent] = useState({ index: null, colors: [] });
   const [dateNumbers, setDateNumbers] = useState({
     dateNumber1: null,
     dateNumber2: null,
@@ -35,23 +35,95 @@ function Colorgame() {
     dateNumber4: null
   });
 
-  const handleBtncolorClick = (color) => {
-    localStorage.setItem("buttonText", color);
-    setModalContent(color); // Store color
-    setShowModal(true); // Open the modal
-    setActiveColor(color);
+  const tabs = [
+    { id: 1, label: "Win Go 30 sec" },
+    { id: 2, label: "Win Go 1 Min" },
+    { id: 3, label: "Win Go 3 Min" },
+    { id: 4, label: "Win Go 5 Min" }
+  ];
+
+  const buttonLabels = ["Random", "2X", "5X", "10X", "20X", "50X", "100X"];
+
+  const images = [
+    // red: #e8373e, green: #1d8c50;
+    { src: ball1, colors: ["#b35af6", "#e8373e"] },
+    { src: ball2, colors: ["#5cce90"] },
+    { src: ball3, colors: ["#e8373e"] }, // No color
+    { src: ball4, colors: ["#5cce90"] },
+    { src: ball5, colors: ["#e8373e"] }, // No color
+    { src: ball6, colors: ["#5cce90", "#b35af6"] },
+    { src: ball7, colors: ["#e8373e"] },
+    { src: ball8, colors: ["#5cce90"] },
+    { src: ball9, colors: ["#e8373e"] },
+    { src: ball10, colors: ["#5cce90"] }
+  ];
+
+  const colors = {
+    "#e8373e": {
+      name: "Red",
+      class:
+        "bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-red-500/50"
+    },
+    "#1d8c50": {
+      name: "Green",
+      class:
+        "bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50"
+    },
+    "#b35af6": {
+      name: "Violet",
+      class:
+        "bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600 hover:bg-gradient-to-br shadow-lg shadow-violet-500/50"
+    }
   };
 
-  const handleBtnSizeClick = (size) => {
-    localStorage.setItem("buttonsize", size);
-    setModalContent(size); // Store color
-    setShowModal(true); // Open the modal
+  const sizes = {
+    Big: {
+      name: "Big",
+      class:
+        "bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50"
+    },
+    Small: {
+      name: "Small",
+      class:
+        "bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600 hover:bg-gradient-to-br shadow-lg shadow-violet-500/50"
+    }
   };
+
+  const handleBtncolorClick = (color) => {
+    const selectedColor = colors[color];
+    localStorage.setItem("buttonText", color);
+
+    setModalContent({
+      index: null, // No index for color selection
+      colors: [selectedColor.name] // Store color name instead of color codes
+    });
+
+    setShowModal(true);
+  };
+
+  const handleBtnSizeClick = (sizeKey) => {
+    localStorage.setItem("buttonsize", sizeKey);
+  
+    setModalContent({
+      index: null, // No index for size selection
+      colors: [sizes[sizeKey].name] // Use name instead of key
+    });
+  
+    setShowModal(true);
+  };
+  
 
   const handleImageClick = (index) => {
-    console.log(`Image at index ${index + 1} clicked`);
-    setModalContent(`${index + 1}`); // Store index
-    setShowModal(true); // Open the modal
+    const selectedBall = images[index];
+
+    console.log(`Clicked on image ${index + 1}, Colors: `, selectedBall.colors);
+
+    setModalContent({
+      index: index + 1,
+      colors: selectedBall.colors // Store color codes
+    });
+
+    setShowModal(true);
   };
 
   // Function to load date numbers from local storage
@@ -84,6 +156,14 @@ function Colorgame() {
     loadDateNumbers();
   }, []);
 
+  // Close Betting Modal when Timer Modal opens
+  useEffect(() => {
+    console.log("showCounterModal in Parent:", showCounterModal); // Debugging
+    if (showCounterModal) {
+      setShowModal(false);
+    }
+  }, [showCounterModal]);
+
   // Function to handle date number change from CountdownTimer
   const handleDateNumberChange = (newDateNumber, tabId) => {
     // Save to local storage and update the state
@@ -103,27 +183,6 @@ function Colorgame() {
   const handleButtonClick = (index) => {
     setActiveButton(index);
   };
-
-  // Array of different images
-  const images = [
-    ball1,
-    ball2,
-    ball3,
-    ball4,
-    ball5,
-    ball6,
-    ball7,
-    ball8,
-    ball9,
-    ball10
-  ];
-
-  const tabs = [
-    { id: 1, label: "Win Go 1 Min" },
-    { id: 2, label: "Win Go 2 Min" },
-    { id: 3, label: "Win Go 3 Min" },
-    { id: 4, label: "Win Go 5 Min" }
-  ];
 
   return (
     <>
@@ -214,10 +273,13 @@ function Colorgame() {
                         initialMinutes={0}
                         initialSeconds={30}
                         tabId={1}
+                        activeTab={activeTab} // Pass activeTab
                         onDateNumberChange={(newDateNumber) =>
                           handleDateNumberChange(newDateNumber, 1)
                         }
-                        setShowCounterModal={setShowCounterModal} // Pass this to child
+                        setShowCounterModal={setShowCounterModal} // Pass state setter
+                        showCounterModal={showCounterModal} // Pass actual state
+                        setShowModal={setShowModal}
                       />
                     </h5>
                   </div>
@@ -286,10 +348,13 @@ function Colorgame() {
                         initialMinutes={1}
                         initialSeconds={0}
                         tabId={2}
+                        activeTab={activeTab} // Pass activeTab
                         onDateNumberChange={(newDateNumber) =>
                           handleDateNumberChange(newDateNumber, 2)
                         }
-                        setShowCounterModal={setShowCounterModal} // Pass this to child
+                        setShowCounterModal={setShowCounterModal} // Pass state setter
+                        showCounterModal={showCounterModal} // Pass actual state
+                        setShowModal={setShowModal}
                       />
                     </h5>
                   </div>
@@ -358,10 +423,13 @@ function Colorgame() {
                         initialMinutes={3}
                         initialSeconds={0}
                         tabId={3}
+                        activeTab={activeTab} // Pass activeTab
                         onDateNumberChange={(newDateNumber) =>
                           handleDateNumberChange(newDateNumber, 3)
                         }
-                        setShowCounterModal={setShowCounterModal} // Pass this to child
+                        setShowCounterModal={setShowCounterModal} // Pass state setter
+                        showCounterModal={showCounterModal} // Pass actual state
+                        setShowModal={setShowModal}
                       />
                     </h5>
                   </div>
@@ -430,10 +498,13 @@ function Colorgame() {
                         initialMinutes={5}
                         initialSeconds={0}
                         tabId={4}
+                        activeTab={activeTab} // Pass activeTab
                         onDateNumberChange={(newDateNumber) =>
                           handleDateNumberChange(newDateNumber, 4)
                         }
-                        setShowCounterModal={setShowCounterModal} // Pass this to child
+                        setShowCounterModal={setShowCounterModal} // Pass state setter
+                        showCounterModal={showCounterModal} // Pass actual state
+                        setShowModal={setShowModal}
                       />
                     </h5>
                   </div>
@@ -455,35 +526,33 @@ function Colorgame() {
             setShowCounterModal={setShowCounterModal}
           />
           <div className="flex w-full justify-between gap-3">
-            <button
-              type="button"
-              onClick={() => handleBtncolorClick("Green")}
-              className="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br  shadow-lg shadow-green-500/50 dark:shadow-lg  font-medium rounded-tr-xl rounded-bl-xl text-sm px-5 py-2.5 text-center "
-            >
-              Green
-            </button>
-            <button
-              type="button"
-              onClick={() => handleBtncolorClick("Violet")}
-              className="w-full text-white bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600 hover:bg-gradient-to-br shadow-lg shadow-violet-500/50 dark:shadow-lg  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
-            >
-              Violet
-            </button>
-            <button
-              type="button"
-              onClick={() => handleBtncolorClick("Red")}
-              className="w-full text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br  shadow-lg shadow-red-500/50 dark:shadow-lg  font-medium rounded-tl-xl rounded-br-xl text-sm px-5 py-2.5 text-center "
-            >
-              Red
-            </button>
+            {Object.entries(colors).map(
+              ([color, { name, class: bgClass }], index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleBtncolorClick(color)}
+                  className={`w-full text-white ${bgClass} dark:shadow-lg font-medium text-sm px-5 py-2.5 text-center ${
+                    index === 0
+                      ? "rounded-tr-xl rounded-bl-xl"
+                      : index === 2
+                      ? "rounded-tl-xl rounded-br-xl"
+                      : "rounded-lg"
+                  }`}
+                >
+                  {name}
+                </button>
+              )
+            )}
           </div>
+          ;
           <div className="w-full flex items-center justify-between gap-1 px-2 py-1.5   rounded-xl shadow bg-gray-900 mt-3">
             <div className="grid grid-cols-5 gap-3 w-full">
               {images.map((image, index) => (
                 <img
                   key={index}
-                  src={image}
-                  alt={`ball-${index}`}
+                  src={image.src} // Access the src from the object
+                  alt={`ball-${index + 1}`}
                   className=""
                   onClick={() => handleImageClick(index)}
                 />
@@ -491,101 +560,50 @@ function Colorgame() {
             </div>
           </div>
           <div className="my-1 flex gap-1 overflow-auto mt-3">
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 0 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(0)}
-            >
-              Random
-            </button>
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 1 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(1)}
-            >
-              2X
-            </button>
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 2 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(2)}
-            >
-              5X
-            </button>
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 3 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(3)}
-            >
-              10X
-            </button>
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 4 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(4)}
-            >
-              20X
-            </button>
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 5 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(5)}
-            >
-              50X
-            </button>
-            <button
-              type="button"
-              className={`text-[#fae59f]  border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
-                activeButton === 6 ? "bg-[#fae59f] text-zinc-900" : ""
-              }`}
-              onClick={() => handleButtonClick(6)}
-            >
-              100X
-            </button>
+            {buttonLabels.map((label, index) => (
+              <button
+                key={index}
+                type="button"
+                className={`text-[#fae59f] border border-[#fae59f] focus:outline-none font-medium rounded-lg text-sm px-5 py-0.5 text-center me-2 mb-2 ${
+                  activeButton === index ? "bg-[#fae59f] text-zinc-900" : ""
+                }`}
+                onClick={() => handleButtonClick(index)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
+          ;
           <div className="my-1 flex gap-1 overflow-auto mt-3">
             <div
               className="inline-flex rounded-md shadow-sm w-full px-4"
               role="group"
             >
-              <button
-                type="button"
-                className="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br  font-medium rounded-s-full  text-sm px-5 py-2.5 text-center"
-                onClick={() => handleBtnSizeClick("Big")}
-              >
-                Big
-              </button>
-
-              <button
-                type="button"
-                className="w-full text-white bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600 hover:bg-gradient-to-br  font-medium rounded-e-full text-sm px-5 py-2.5 text-center "
-                onClick={() => handleBtnSizeClick("Small")}
-              >
-                Small
-              </button>
+              {Object.entries(sizes).map(([key, value]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`w-full text-white font-medium text-sm px-5 py-2.5 text-center ${
+                    value.class
+                  } ${key === "Big" ? "rounded-s-full" : "rounded-e-full"}`}
+                  onClick={() => handleBtnSizeClick(key)}
+                >
+                  {value.name}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
-        <TabLedger />
+        <TabLedger activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
       {/* Modal */}
       {showModal && (
         <Modal
           showModal={showModal}
-          content={modalContent}
+          ballIndex={modalContent.index} // Pass index
+          colors={modalContent.colors} // Pass colors array
+          gradientColor={modalContent.colors.join(", ")} // Fix: Join color names or hex values
           onClose={closeModal}
           label={tabs.find((tab) => tab.id === activeTab)?.label}
         />

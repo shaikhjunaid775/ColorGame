@@ -1,5 +1,11 @@
+import { useEffect } from "react";
+
 const CountdownModal = ({ showCounterModal, setShowCounterModal, seconds }) => {
-  if (!showCounterModal) return null; // Do not render if modal is not shown
+  if (!showCounterModal) return null;
+
+  useEffect(() => {
+    console.log("showCounterModal in Child:", showCounterModal); // Debugging
+  }, [showCounterModal]);
 
   return (
     <div className="z-10 fixed inset-0 flex items-center gap-4 justify-center bg-black bg-opacity-30">

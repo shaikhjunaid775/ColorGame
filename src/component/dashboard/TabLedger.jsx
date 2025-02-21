@@ -1,16 +1,12 @@
 import { useState } from "react";
 
-function TabLedger() {
+function TabLedger({activeTab}) {
   const [activeTab2, setActiveTab2] = useState(1);
-  const [activeTab, setActiveTab] = useState(1);
 
   const handleTabClick2 = (tabNumber2) => {
     setActiveTab2(tabNumber2);
   };
 
-  const handleTabClick = (tabNumber) => {
-    setActiveTab(tabNumber);
-  };
   return (
     <>
       <ul
@@ -63,8 +59,8 @@ function TabLedger() {
         >
           <div className={`${activeTab === 1 ? "" : "hidden"}`}>
             <div className="w-full  gradient-top-btm   rounded-xl shadow ">
-              <div className="rounded-lg relative overflow-x-auto ">
-                <span>tab1</span>
+              <div className="rounded-lg relative overflow-x-auto text-center">
+                <span>Win Go 30 Sec</span>
                 <table className="rounded-lg w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -147,8 +143,8 @@ function TabLedger() {
           </div>
           <div className={`${activeTab === 2 ? "" : "hidden"}`}>
             <div className="w-full  gradient-top-btm   rounded-xl shadow ">
-              <div className="rounded-lg relative overflow-x-auto ">
-                <span>tab2</span>
+              <div className="rounded-lg relative overflow-x-auto text-center">
+              <span>Win Go 1 Min</span>
                 <table className="rounded-lg w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -231,8 +227,8 @@ function TabLedger() {
           </div>
           <div className={`${activeTab === 3 ? "" : "hidden"}`}>
             <div className="w-full  gradient-top-btm   rounded-xl shadow ">
-              <div className="rounded-lg relative overflow-x-auto ">
-                <span>tab3</span>
+              <div className="rounded-lg relative overflow-x-auto text-center">
+              <span>Win Go 3 Min</span>
                 <table className="rounded-lg w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -315,8 +311,8 @@ function TabLedger() {
           </div>
           <div className={`${activeTab === 4 ? "" : "hidden"}`}>
             <div className="w-full  gradient-top-btm   rounded-xl shadow ">
-              <div className="rounded-lg relative overflow-x-auto ">
-                <span>tab4</span>
+              <div className="rounded-lg relative overflow-x-auto text-center">
+              <span>Win Go 5 Min</span>
                 <table className="rounded-lg w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
